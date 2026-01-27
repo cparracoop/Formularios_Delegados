@@ -42,7 +42,50 @@
             <div class="grid">
             <div class="field field">
               <label for="nombres">Nombres y apellidos *</label>
-              <input type="text" id="nombres" name="nombres" required>
+<input
+  type="text"
+  id="nombres"
+  name="nombres"
+  required
+  pattern="^[^0-9]*$"
+  title="No se permiten números en este campo."
+  autocomplete="off"
+/>
+
+<script>
+  const nombres = document.getElementById("nombres");
+
+  // 1) Bloquear números al teclear
+  nombres.addEventListener("keydown", (e) => {
+    const allowedKeys = [
+      "Backspace", "Delete", "ArrowLeft", "ArrowRight",
+      "Tab", "Home", "End"
+    ];
+
+    // Permitir teclas de control y atajos (Ctrl/Cmd + C/V/X/A)
+    if (allowedKeys.includes(e.key) || e.ctrlKey || e.metaKey) return;
+
+    // Bloquear dígitos (fila superior y teclado numérico)
+    if (/[0-9]/.test(e.key)) e.preventDefault();
+  });
+
+  // 2) Limpiar números si los pegan, autocompleta o en móviles (input)
+  nombres.addEventListener("input", () => {
+    const cleaned = nombres.value.replace(/[0-9]+/g, "");
+    if (nombres.value !== cleaned) nombres.value = cleaned;
+  });
+
+  // (Opcional) Quitar números justo al pegar (antes de que entren)
+  nombres.addEventListener("paste", (e) => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData("text");
+    const cleaned = text.replace(/[0-9]+/g, "");
+    // Inserta texto limpio en la posición del cursor
+    document.execCommand("insertText", false, cleaned);
+  });
+</script>
+
+
               <small class="error"></small>
             </div>
 
