@@ -278,6 +278,36 @@ function formDataToObject(fd) {
   return obj;
 }
 
+// ============================
+// Helpers: agrupar secciones repetibles (nf/f/exp) en un solo JSON
+// ============================
+function buildSectionFromArrays(raw, prefix, fields, wrapId) {
+  // Si la sección está oculta, no la enviamos
+  if (wrapId) {
+    const wrap = document.getElementById(wrapId);
+    if (wrap && wrap.classList.contains("hidden")) return [];
+  }
+
+  // Calcular cantidad de filas con base en el max de longitudes
+  let n = 0;
+  for (const f of fields) {
+    const k = `${prefix}_${f}`;
+    if (Array.isArray(raw[k])) n = Math.max(n, raw[k].length);
+  }
+  if (!n) return [];
+
+  const arr = [];
+  for (let i = 0; i < n; i++) {
+    const obj = {};
+    for (const f of fields) {
+      const k = `${prefix}_${f}`;
+      obj[f] = Array.isArray(raw[k]) ? (raw[k][i] ?? "") : "";
+    }
+    arr.push(obj);
+  }
+  return arr;
+}
+
 // Normaliza checkboxes (true/false) y deja radios/text tal cual
 function normalizeBooleans(rawObj, formEl) {
   const out = { ...rawObj };
@@ -327,7 +357,7 @@ form.addEventListener("submit", async (e) => {
     const fd = new FormData(form);
 
     // OJO: FormData incluye File objects para inputs file; los quitamos del objeto plano
-    // porque los enviaremos como base64 aparte.
+    // porque los enviaremos como base64 aparte (files{}).
     const raw = formDataToObject(fd);
 
     // Eliminar keys de soporte que vienen como File/empty, porque ya se enviarán en files{}
@@ -335,17 +365,29 @@ form.addEventListener("submit", async (e) => {
     delete raw["f_soporte"];
     delete raw["exp_soporte"];
 
-    // 2) Normalizar booleanos (checkbox)
+    // 2) Construir secciones repetibles (nf/f/exp) como arrays de objetos (JSON agrupado)
+    const nf = buildSectionFromArrays(raw, "nf", ["institucion", "duracion", "inicio", "fin", "programa"], "noFormalWrap");
+    const f  = buildSectionFromArrays(raw, "f",  ["institucion", "terminacion", "programa"], "formalWrap");
+    const exp = buildSectionFromArrays(raw, "exp", ["entidad", "inicio", "fin", "cargo", "funciones"], "expWrap");
+
+    // Quitar del raw los arrays paralelos para que no se dupliquen en data
+    [
+      "nf_institucion","nf_duracion","nf_inicio","nf_fin","nf_programa",
+      "f_institucion","f_terminacion","f_programa",
+      "exp_entidad","exp_inicio","exp_fin","exp_cargo","exp_funciones"
+    ].forEach((k) => { delete raw[k]; });
+
+    // 3) Normalizar booleanos (checkbox)
     const data = normalizeBooleans(raw, form);
 
-    // 3) Adjuntos en base64 (JSON)
+    // 4) Adjuntos en base64 (JSON) - QUEDA IGUAL
     const files = await collectFilesAsJson(form);
 
-    // 4) Payload final
+    // 5) Payload final
     const payload = {
       submittedAt: new Date().toISOString(),
-      data,   // todos los campos
-      files   // todos los soportes (base64)
+      data: { ...data, nf, f, exp },
+      files
     };
 
     const response = await fetch(endpoint, {
