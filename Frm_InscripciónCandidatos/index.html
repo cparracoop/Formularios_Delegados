@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inscripción de Candidatos - COOPETROL 2026–2028</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero__inner">
+        <img class="hero__logo" src="./logo-elecciones.png" alt="Elecciones COOPETROL 2026-2030">
+        <div class="hero__text">
+          <h1>Formulario de Inscripción de Candidatos</h1>
+          <p>Consejo de Administración / Junta de Vigilancia · Período 2026–2028</p>
+          <span style="font-weight: 600;">Anexo No. 2 a la Resolución No. XXX del 31 de Enero de 2026</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="progress">
+        <div class="progress__bar" id="progressBar"></div>
+      </div>
+      <div class="progress__meta">
+        <span id="stepLabel">Paso 1 de 5</span>
+        <span class="muted">Todos los campos marcados con * son obligatorios.</span>
+      </div>
+
+      <form id="wizardForm" novalidate>
+        <!-- =======================
+             STEP 1: Datos generales y personales
+        ======================== -->
+        <section class="step active" data-step="1">
+          <h2>1) Datos generales</h2>
+            <div class="grid">
+            <div class="field field">
+              <label for="nombres">Nombres y apellidos *</label>
+              <input type="text" id="nombres" name="nombres" required>
+              <small class="error"></small>
+            </div>
+
+            <div class="field">
+              <label for="documento">Número de documento de identidad *</label>
+              <input type="text" id="documento" name="documento" inputmode="numeric" pattern="[0-9]+" required placeholder="Solo números">
+              <small class="error"></small>
+            </div>
+
+          </div>
+
+          <h2>2) Postulación</h2>
+                      <div class="field field--full">
+              <span>En mi condición de asociado y como delegado de la Caja Cooperativa Petrolera “Coopetrol”, manifiesto mi intención de inscribirme como candidato para participar en el proceso de elección de:</label>
+              <div class="options">
+                <label class="opt"><input type="radio" name="proceso" value="Consejo de Administración" required> Consejo de Administración</label>
+                <label class="opt"><input type="radio" name="proceso" value="Junta de Vigilancia" required> Junta de Vigilancia</label>
+              </div>
+              <small class="error"></small>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- =======================
+             STEP 2: Educación No Formal (Word)
+        ======================== -->
+
+        <script>
+          window.addEventListener("DOMContentLoaded", () => {
+          const radioSi = document.querySelector('input[type="radio"][name="noFormalFlag"][value="Si"]');
+          if (!radioSi) return;
+
+          radioSi.checked = true;          // lo marca
+          radioSi.click();                 // dispara eventos nativos (recomendado)
+          radioSi.dispatchEvent(new Event("change", { bubbles: true })); // por si tu lógica escucha change
+        });
+
+
+        </script>
+
+        <section class="step" data-step="2">
+          <h2>3) Educación No Formal (Educación cooperativa)</h2>
+          <p class="hint">
+            Conforme a lo establecido en articulo 54 parágrafo 1, literal “C” del estatuto Coopetrol, para ser elegido miembro del Consejo de Administración, se requiere “Acreditar haber recibido educación cooperativa, con un mínimo de ciento veinte (120) horas”.
+          </p>
+
+          <div class="field hidden">
+            <label>¿Desea registrar Educación No Formal? *</label>
+            <div class="options">
+              <label class="opt"><input type="radio" name="noFormalFlag" value="Si" checked required> Sí</label>
+              <label class="opt"><input type="radio" name="noFormalFlag" value="No" required> No, ya la registré anteriormente</label>
+            </div>
+            <small class="error"></small>
+          </div>
+
+          <div id="noFormalWrap" class="panel ">
+  <p class="hint">Agrega varios registros (uno por curso). Cada registro requiere soporte.</p>
+
+  <div id="noFormalList" class="repeat-list"></div>
+
+  <button type="button" class="btn btn--primary btn-add" id="addNoFormalBtn">
+    + Agregar otro curso
+  </button>
+
+  <template id="tplNoFormal">
+    <div class="repeat-item">
+      <div class="repeat-head">
+        <strong class="repeat-title">Curso</strong>
+        <button type="button" class="btn btn--ghost btn-remove">Quitar</button>
+      </div>
+
+      <div class="grid">
+        <div class="field">
+          <label>Nombre institución *</label>
+          <input type="text" name="nf_institucion[]">
+          <small class="error"></small>
+        </div>
+
+        <div class="field">
+          <label>Duración (horas) *</label>
+          <input type="number" name="nf_duracion[]" min="1">
+          <small class="error"></small>
+        </div>
+
+        <div class="field">
+          <label>Fecha de inicio *</label>
+          <input type="date" name="nf_inicio[]">
+          <small class="error"></small>
+        </div>
+
+        <div class="field">
+          <label>Fecha de terminación *</label>
+          <input type="date" name="nf_fin[]">
+          <small class="error"></small>
+        </div>
+
+        <div class="field field--full">
+          <label>Nombre del programa *</label>
+          <input type="text" name="nf_programa[]">
+          <small class="error"></small>
+        </div>
+
+        <div class="field field--full">
+          <label>Adjuntar certificado/soporte *</label>
+          <input type="file" name="nf_soporte[]" accept=".pdf,.jpg,.jpeg,.png">
+          <small class="error"></small>
+        </div>
+      </div>
+    </div>
+  </template>
+</div>
+
+        </section>
+
+        <!-- =======================
+             STEP 3: Educación Formal (Word)
+        ======================== -->
+        <section class="step" data-step="3">
+          <h2>4) Educación Formal</h2>
+          <p style="text-align: justify;" class="hint">
+            Conforme a lo establecido en articulo 54 parágrafo 1, literal “G” de los estatutos de Coopetrol, para ser elegido miembro del Consejo de Administración o de la Junta de Vigilancia, los candidatos deben “Acreditar con certificaciones y/o diplomas de educación formal e informal conocimientos en temas relacionados con la actividad financiera, responsabilidades y funciones de los administradores, régimen de inhabilidades e incompatibilidades y demás temas relacionados con el objeto social de la Cooperativa.”; así mismo, el numeral 5.1.2. del Capítulo VI del Título II de la Circular Básica Jurídica de la Superintendencia de la Economía Solidaria exige para ser miembro del Consejo de Administración: “Contar con título profesional en áreas de conocimiento relacionadas con la actividad de la cooperativa, tales como administración, economía, contaduría, derecho, finanzas o afines (…)”. Registre la información que considere relevante en el siguiente espacio:
+          </p>
+
+          <div class="field">
+            <label>¿Desea registrar Educación Formal? *</label>
+            <div class="options">
+              <label class="opt"><input type="radio" name="formalFlag" value="Si" required> Sí</label>
+              <label class="opt"><input type="radio" name="formalFlag" value="No" required> No, ya la registré anteriormente</label>
+            </div>
+            <small class="error"></small>
+          </div>
+
+          <div id="formalWrap" class="panel hidden">
+  <p class="hint">Puedes agregar varios registros (uno por estudio). Cada registro requiere soporte.</p>
+
+  <div id="formalList" class="repeat-list"></div>
+
+  <button type="button" class="btn btn--primary btn-add" id="addFormalBtn">
+    + Agregar otro estudio
+  </button>
+
+  <template id="tplFormal">
+    <div class="repeat-item">
+      <div class="repeat-head">
+        <strong class="repeat-title">Estudio</strong>
+        <button type="button" class="btn btn--ghost btn-remove">Quitar</button>
+      </div>
+
+      <div class="grid">
+        <div class="field field--full">
+          <label>Nombre institución *</label>
+          <input type="text" name="f_institucion[]">
+          <small class="error"></small>
+        </div>
+
+        <div class="field">
+          <label>Fecha de terminación *</label>
+          <input type="date" name="f_terminacion[]">
+          <small class="error"></small>
+        </div>
+
+        <div class="field field--full">
+          <label>Nombre del programa/título *</label>
+          <input type="text" name="f_programa[]">
+          <small class="error"></small>
+        </div>
+
+        <div class="field field--full">
+          <label>Adjuntar diploma/certificación *</label>
+          <input type="file" name="f_soporte[]" accept=".pdf,.jpg,.jpeg,.png">
+          <small class="error"></small>
+        </div>
+      </div>
+    </div>
+  </template>
+</div>
+
+        </section>
+
+        <!-- =======================
+             STEP 4: Experiencia (Word)
+        ======================== -->
+        <section class="step" data-step="4">
+          <h2>5) Experiencia</h2>
+          <p style="text-align: justify;" class="hint">
+            El numeral 5.1.2. del Capítulo VI del Título II de la Circular Básica Jurídica de la Superintendencia de la Economía Solidaria exige para ser miembro del Consejo de Administración el siguiente requisito, en caso de contar con el título profesional “(…) tener experiencia mínima de cuatro (4) años en el ejercicio de su profesión y dos (2) años de experiencia específica en materias asociadas a la actividad cooperativa, financiera o en actividades, afines, relacionadas o complementarias a estas. Cuando se pretenda hacer valer como experiencia el ejercicio como consejero suplente, se hace necesario acreditar su participación, por lo menos con voz, en el consejo de administración”, así mismo, establece: “En el evento en que el postulado no cuente con título profesional, debe acreditar como mínimo cinco (5) años de experiencia específica en las materias referidas en el presente numeral”. Registre la información que considere relevante en el siguiente espacio, por favor adjunte las respectivas certificaciones laborales con funciones:
+          </p>
+
+          <div class="field">
+            <label>¿Desea registrar Experiencia? *</label>
+            <div class="options">
+              <label class="opt"><input type="radio" name="expFlag" value="Si" required> Sí</label>
+              <label class="opt"><input type="radio" name="expFlag" value="No" required> No, ya la registré anteriormente</label>
+            </div>
+            <small class="error"></small>
+          </div>
+
+          <div id="expWrap" class="panel hidden">
+  <p class="hint">Puedes agregar varios registros (uno por experiencia). Cada registro requiere soporte.</p>
+
+  <div id="expList" class="repeat-list"></div>
+
+  <button type="button" class="btn btn--primary btn-add" id="addExpBtn">
+    + Agregar otra experiencia
+  </button>
+
+  <template id="tplExp">
+    <div class="repeat-item">
+      <div class="repeat-head">
+        <strong class="repeat-title">Experiencia</strong>
+        <button type="button" class="btn btn--ghost btn-remove">Quitar</button>
+      </div>
+
+      <div class="grid">
+        <div class="field field--full">
+          <label>Entidad *</label>
+          <input type="text" name="exp_entidad[]">
+          <small class="error"></small>
+        </div>
+
+        <div class="field">
+          <label>Fecha de inicio *</label>
+          <input type="date" name="exp_inicio[]">
+          <small class="error"></small>
+        </div>
+
+        <div class="field">
+          <label>Fecha de terminación *</label>
+          <input type="date" name="exp_fin[]">
+          <small class="error"></small>
+        </div>
+
+        <div class="field field--full">
+          <label>Cargo *</label>
+          <input type="text" name="exp_cargo[]">
+          <small class="error"></small>
+        </div>
+
+        <div class="field field--full">
+          <label>Funciones *</label>
+          <textarea name="exp_funciones[]" rows="5"></textarea>
+          <small class="error"></small>
+        </div>
+
+        <div class="field field--full">
+          <label>Adjuntar certificación laboral (con funciones) *</label>
+          <input type="file" name="exp_soporte[]" accept=".pdf,.jpg,.jpeg,.png">
+          <small class="error"></small>
+        </div>
+      </div>
+    </div>
+  </template>
+</div>
+
+        </section>
+
+        <!-- =======================
+             STEP 5: Declaraciones y Juramento (Word)
+        ======================== -->
+        <section class="step" data-step="5">
+          <h2>6) Declaraciones y Autorizaciones</h2>
+          <p class="hint">
+            Por la presentación de este formulario efectúo e imparto las siguientes declaraciones y autorizaciones, las que se entienden irrevocables: 
+          </p>
+
+          <div class="checklist">
+            <label><input type="checkbox" name="d1" required> 1ª Declaro que he conocido oportunamente la información relacionada con la elección de miembros del Consejo de Administración y/o Junta de Vigilancia de la Cooperativa, la cual tuve oportunidad de conocer y analizar.</label>
+            <label><input type="checkbox" name="d2" required> 2ª Declaro que la información aquí contenida es completamente veraz.</label>
+            <label><input type="checkbox" name="d3" required> 3ª Declaro que conozco y acepto los efectos que el suministro de información no veraz constituye causal de exclusión de la Cooperativa, tal como se desprende de las disposiciones legales y estatutarias.</label>
+            <label><input type="checkbox" name="d4" required> 4ª Declaro que conozco y acepto las políticas de manejo de datos de Coopetrol, las cuales, he tenido la oportunidad de consultar en su debida oportunidad.</label>
+            <label><input type="checkbox" name="d5" required> 5ª Autorizo a Coopetrol para que a través de sus instancias y por cualquier medio verifique la información aquí suministrada y la asociada o derivada de la misma.</label>
+            <label><input type="checkbox" name="d6" required> 6ª Autorizo a Coopetrol para que consulte ante los administradores de bases de datos financieros, comerciales (centrales de riesgo) y de información fiscal, judicial y disciplinaria y listas de chequeo los datos sobre mis comportamientos y antecedentes, los cuales, además autorizo su divulgación con los demás delegados para los efectos de los procesos democráticos que adelantará Coopetrol a partir de la fecha.</label>
+            <label><input type="checkbox" name="d7" required> 7ª Autorizo a Coopetrol para que la información recopilada en razón de las autorizaciones impartidas sea divulgada a través de los medios que Coopetrol considere pertinentes y para efectos de los procesos democráticos que se adelantarán al interior de la Cooperativa.</label>
+            <label><input type="checkbox" name="d8" required> 8ª Declaro que conozco las funciones, los deberes y las prohibiciones establecidas en la normatividad vigente y los estatutos de Coopetrol para el Consejo de Administración y la Junta de Vigilancia.</label>
+            <label><input type="checkbox" name="d9" required> 9ª Me comprometo a entregar los datos, documentos o soportes adicionales que se requieran para acreditar las declaraciones y manifestaciones consignadas en el presente formulario</label>
+          </div>
+          <br>
+          <h2>7) Otras Declaraciones</h2>
+            <p style="text-align: justify;margin-bottom: 20px;" class="hint">De conformidad con los literales d), e), f), i), j), k), l)  del parágrafo 1 del artículo 54 del Estatuto de Coopetrol, el numeral 5.1.5. del Capítulo VI del Título II de la Circular Básica Jurídica de la Superintendencia de la Economía Solidaria, y el artículo 60 de la Ley 454 de 1998, declaro bajo la gravedad de juramento que:</p> 
+          
+            
+
+          <div class="grid">
+            <div class="field field--full">
+              <label>He sido sancionado en COOPETROL durante el año anterior a la nominación, con suspensión o pérdida de los derechos sociales o suspensión del cargo. *</label>
+              <div class="options">
+                <label class="opt"><input type="radio" name="j1" value="Sí" required> Sí</label>
+                <label class="opt"><input type="radio" name="j1" value="No" required> No</label>
+              </div>
+              <small class="error"></small>
+            </div>
+
+            <div class="field field--full">
+              <label>Llevo asuntos en calidad de asesor o contratista de Coopetrol, de conformidad con lo establecido en el artículo 60 de la Ley 454 de 1998 *</label>
+              <div class="options">
+                <label class="opt"><input type="radio" name="j2" value="Sí" required> Sí</label>
+                <label class="opt"><input type="radio" name="j2" value="No" required> No</label>
+              </div>
+              <small class="error"></small>
+            </div>
+
+            <div class="field field--full">
+              <label>He sido sancionado penal, disciplinaria, administrativamente o removido de cargos de dirección de una organización de economía solidaria por hechos atribuibles al candidato.  *</label>
+              <div class="options">
+                <label class="opt"><input type="radio" name="j3" value="Sí" required> Sí</label>
+                <label class="opt"><input type="radio" name="j3" value="No" required> No</label>
+              </div>
+              <small class="error"></small>
+            </div>
+
+            <div class="field field--full hidden" id="j3_detail_wrap">
+              <label for="j3_detail">En su caso, indique el tipo de sanción, la autoridad sancionadora, y los motivos de la misma y demás información que considere relevante: *</label>
+              <textarea id="j3_detail" name="j3_detail" rows="4"></textarea>
+              <small class="error"></small>
+            </div>
+
+            <div class="field field--full">
+              <label>Tengo antecedentes judiciales/disciplinarios/de policía/fiscales negativos *</label>
+              <div class="options">
+                <label class="opt"><input type="radio" name="j4" value="Sí" required> Sí</label>
+                <label class="opt"><input type="radio" name="j4" value="No" required> No</label>
+              </div>
+              <small class="error"></small>
+            </div>
+
+            <div class="field field--full">
+            <label>He sido sancionado y ejecutoriada la sanción por parte de la autoridad que ejerce el control, inspección y vigilancia sobre la Cooperativa *</label>
+            <div class="options">
+              <label class="opt"><input type="radio" name="j4b" value="Sí" required> Sí</label>
+              <label class="opt"><input type="radio" name="j4b" value="No" required> No</label>
+            </div>
+            <small class="error"></small>
+          </div>
+
+            <div class="field field--full">
+              <label>He sido removido por la instancia competente de la Cooperativa de algún cargo social para el cual haya sido elegido o designado, o he sido declarado dimitente durante el desempeño de los mismos. *</label>
+              <div class="options">
+                <label class="opt"><input type="radio" name="j5" value="Sí" required> Sí</label>
+                <label class="opt"><input type="radio" name="j5" value="No" required> No</label>
+              </div>
+              <small class="error"></small>
+            </div>
+
+            <div class="field field--full">
+              <label>Ejerzo como Gerente o miembro del Consejo de Administración o Junta de Vigilancia o miembro de órganos similares en entidades del sector cooperativo y/o que sean vigiladas por la Superintendencia de Economía Solidaria –SES. *</label>
+              <div class="options">
+                <label class="opt"><input type="radio" name="j6" value="Sí" required> Sí</label>
+                <label class="opt"><input type="radio" name="j6" value="No" required> No</label>
+              </div>
+              <small class="error"></small>
+            </div>
+
+            <div class="panel hidden" id="j6_detail_wrap">
+              <div class="grid">
+                <div class="field field--full">
+                  <label for="org_nombre">Nombre de la organización *</label>
+                  <input type="text" id="org_nombre" name="org_nombre">
+                  <small class="error"></small>
+                </div>
+
+                <div class="field">
+                  <label for="org_nit">NIT *</label>
+                  <input type="text" id="org_nit" name="org_nit" inputmode="numeric" pattern="[0-9]+">
+                  <small class="error"></small>
+                </div>
+
+                <div class="field">
+                  <label for="org_cargo">Cargo que ejerce *</label>
+                  <input type="text" id="org_cargo" name="org_cargo">
+                  <small class="error"></small>
+                </div>
+              </div>
+            </div>
+
+            <div class="field field--full">
+              <label>Estoy incurso en causales de inhabilidad o incompatibilidad legal o estatutaria *</label>
+              <div class="options">
+                <label class="opt"><input type="radio" name="j7" value="Sí" required> Sí</label>
+                <label class="opt"><input type="radio" name="j7" value="No" required> No</label>
+              </div>
+              <small class="error"></small>
+            </div>
+          </div>
+
+          <h2>8) Firma</h2>
+          <p class="hint">Lo anterior, sin perjuicio de las validaciones que adelante directamente la Junta de Vigilancia y/o el órgano encargado de verificar el cumplimiento de los requisitos.</p>
+
+          <div class="field">
+            <label style="max-width: 110px;" class="opt">
+              <input type="checkbox" name="firma" required>
+              Acepto *
+            </label>
+            <small class="error"></small>
+          </div>
+        </section>
+
+        <!-- Controls -->
+        <div class="controls">
+          <button type="button" class="btn btn--ghost" id="prevBtn">Atrás</button>
+          <button type="button" class="btn" id="nextBtn">Siguiente</button>
+          <button type="submit" class="btn btn--primary hidden" id="submitBtn">Enviar</button>
+        </div>
+
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <footer class="footer">
+      <p class="muted">COOPETROL · Proceso Electoral · 2026–2028</p>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
