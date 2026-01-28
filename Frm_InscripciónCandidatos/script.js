@@ -37,6 +37,25 @@ function setRequired(container, required) {
 // ============================
 document.addEventListener("DOMContentLoaded", () => {
   const form = getFormEl();
+
+  const MAX_MB = 1;
+const MAX_BYTES = MAX_MB * 1024 * 1024;
+
+form.addEventListener("change", (e) => {
+  const input = e.target;
+  if (!(input instanceof HTMLInputElement)) return;
+  if (input.type !== "file") return;
+
+  const file = input.files?.[0];
+  if (!file) return;
+
+  if (file.size > MAX_BYTES) {
+    alert(`El archivo "${file.name}" pesa ${(file.size / (1024 * 1024)).toFixed(2)} MB. Máximo permitido: ${MAX_MB} MB.`);
+    input.value = ""; // limpia el input
+  }
+});
+
+
   if (!form) {
     console.error("No se encontró el formulario (wizardForm / coopetrolForm).");
     return;
@@ -63,6 +82,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (prevBtn) prevBtn.disabled = current === 0;
     if (nextBtn) nextBtn.classList.toggle("hidden", current === total - 1);
     if (submitBtn) submitBtn.classList.toggle("hidden", current !== total - 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
   }
 
   function validateStep(stepEl) {
@@ -448,3 +469,4 @@ form.addEventListener("submit", async (e) => {
 
 
 });
+
