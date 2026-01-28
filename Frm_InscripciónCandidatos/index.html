@@ -91,7 +91,7 @@
 
             <div class="field">
               <label for="documento">Número de documento de identidad *</label>
-              <input type="text" id="documento" name="documento" inputmode="numeric" pattern="[0-9]+" required placeholder="Solo números">
+              <input maxlength="10" type="text" id="documento" name="documento" inputmode="numeric" pattern="[0-9]+" required placeholder="Solo números">
               <small class="error"></small>
             </div>
 
@@ -167,7 +167,7 @@
 
         <div class="field">
           <label>Duración (horas) *</label>
-          <input type="number" name="nf_duracion[]" min="1">
+          <input type="number" name="nf_duracion[]" min="1" max="999" maxlength="3">
           <small class="error"></small>
         </div>
 
@@ -327,7 +327,7 @@
 
         <div class="field field--full">
           <label>Funciones *</label>
-          <textarea name="exp_funciones[]" rows="5"></textarea>
+          <textarea maxlength="600" name="exp_funciones[]" rows="5"></textarea>
           <small class="error"></small>
         </div>
 
@@ -353,15 +353,15 @@
           </p>
 
           <div class="checklist">
-            <label><input type="checkbox" name="d1" required> 1ª Declaro que he conocido oportunamente la información relacionada con la elección de miembros del Consejo de Administración y/o Junta de Vigilancia de la Cooperativa, la cual tuve oportunidad de conocer y analizar.</label>
-            <label><input type="checkbox" name="d2" required> 2ª Declaro que la información aquí contenida es completamente veraz.</label>
-            <label><input type="checkbox" name="d3" required> 3ª Declaro que conozco y acepto los efectos que el suministro de información no veraz constituye causal de exclusión de la Cooperativa, tal como se desprende de las disposiciones legales y estatutarias.</label>
-            <label><input type="checkbox" name="d4" required> 4ª Declaro que conozco y acepto las políticas de manejo de datos de Coopetrol, las cuales, he tenido la oportunidad de consultar en su debida oportunidad.</label>
-            <label><input type="checkbox" name="d5" required> 5ª Autorizo a Coopetrol para que a través de sus instancias y por cualquier medio verifique la información aquí suministrada y la asociada o derivada de la misma.</label>
-            <label><input type="checkbox" name="d6" required> 6ª Autorizo a Coopetrol para que consulte ante los administradores de bases de datos financieros, comerciales (centrales de riesgo) y de información fiscal, judicial y disciplinaria y listas de chequeo los datos sobre mis comportamientos y antecedentes, los cuales, además autorizo su divulgación con los demás delegados para los efectos de los procesos democráticos que adelantará Coopetrol a partir de la fecha.</label>
-            <label><input type="checkbox" name="d7" required> 7ª Autorizo a Coopetrol para que la información recopilada en razón de las autorizaciones impartidas sea divulgada a través de los medios que Coopetrol considere pertinentes y para efectos de los procesos democráticos que se adelantarán al interior de la Cooperativa.</label>
-            <label><input type="checkbox" name="d8" required> 8ª Declaro que conozco las funciones, los deberes y las prohibiciones establecidas en la normatividad vigente y los estatutos de Coopetrol para el Consejo de Administración y la Junta de Vigilancia.</label>
-            <label><input type="checkbox" name="d9" required> 9ª Me comprometo a entregar los datos, documentos o soportes adicionales que se requieran para acreditar las declaraciones y manifestaciones consignadas en el presente formulario</label>
+            <label><input type="checkbox" name="d1" required> <span class="num">1ª</span> Declaro que he conocido oportunamente la información relacionada con la elección de miembros del Consejo de Administración y/o Junta de Vigilancia de la Cooperativa, la cual tuve oportunidad de conocer y analizar.</label>
+            <label><input type="checkbox" name="d2" required> <span class="num">2ª</span> Declaro que la información aquí contenida es completamente veraz.</label>
+            <label><input type="checkbox" name="d3" required> <span class="num">3ª</span> Declaro que conozco y acepto los efectos que el suministro de información no veraz constituye causal de exclusión de la Cooperativa, tal como se desprende de las disposiciones legales y estatutarias.</label>
+            <label><input type="checkbox" name="d4" required> <span class="num">4ª</span> Declaro que conozco y acepto las políticas de manejo de datos de Coopetrol, las cuales, he tenido la oportunidad de consultar en su debida oportunidad.</label>
+            <label><input type="checkbox" name="d5" required> <span class="num">5ª</span> Autorizo a Coopetrol para que a través de sus instancias y por cualquier medio verifique la información aquí suministrada y la asociada o derivada de la misma.</label>
+            <label><input type="checkbox" name="d6" required> <span class="num">6ª</span> Autorizo a Coopetrol para que consulte ante los administradores de bases de datos financieros, comerciales (centrales de riesgo) y de información fiscal, judicial y disciplinaria y listas de chequeo los datos sobre mis comportamientos y antecedentes, los cuales, además autorizo su divulgación con los demás delegados para los efectos de los procesos democráticos que adelantará Coopetrol a partir de la fecha.</label>
+            <label><input type="checkbox" name="d7" required> <span class="num">7ª</span> Autorizo a Coopetrol para que la información recopilada en razón de las autorizaciones impartidas sea divulgada a través de los medios que Coopetrol considere pertinentes y para efectos de los procesos democráticos que se adelantarán al interior de la Cooperativa.</label>
+            <label><input type="checkbox" name="d8" required> <span class="num">8ª</span> Declaro que conozco las funciones, los deberes y las prohibiciones establecidas en la normatividad vigente y los estatutos de Coopetrol para el Consejo de Administración y la Junta de Vigilancia.</label>
+            <label><input type="checkbox" name="d9" required> <span class="num">9ª</span> Me comprometo a entregar los datos, documentos o soportes adicionales que se requieran para acreditar las declaraciones y manifestaciones consignadas en el presente formulario</label>
           </div>
           <br>
           <h2>7) Otras Declaraciones</h2>
@@ -399,7 +399,7 @@
 
             <div class="field field--full hidden" id="j3_detail_wrap">
               <label for="j3_detail">En su caso, indique el tipo de sanción, la autoridad sancionadora, y los motivos de la misma y demás información que considere relevante: *</label>
-              <textarea id="j3_detail" name="j3_detail" rows="4"></textarea>
+              <textarea maxlength="600" id="j3_detail" name="j3_detail" rows="4"></textarea>
               <small class="error"></small>
             </div>
 
@@ -499,6 +499,6 @@
     </footer>
   </main>
 
-  <script src="script.js"></script>
+  <script src="script_ajustado.js"></script>
 </body>
 </html>
