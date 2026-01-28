@@ -335,6 +335,24 @@ async function collectFilesAsJson(formEl) {
   return { nf_soporte, f_soporte, exp_soporte };
 }
 
+// ============================
+// Helper: asociar archivo (base64) dentro de cada registro nf/f/exp por índice
+// ============================
+function attachFilesToSection(sectionArr, fileArr) {
+  return (sectionArr || []).map((row, i) => {
+    const f = Array.isArray(fileArr) ? fileArr[i] : null;
+    if (!f) return { ...row };
+    if (f === null) return { ...row };
+    return {
+      ...row,
+      fileName: f.fileName,
+      mimeType: f.mimeType,
+      size: f.size,
+      base64: f.base64
+    };
+  });
+}
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -380,14 +398,18 @@ form.addEventListener("submit", async (e) => {
     // 3) Normalizar booleanos (checkbox)
     const data = normalizeBooleans(raw, form);
 
-    // 4) Adjuntos en base64 (JSON) - QUEDA IGUAL
+    // 4) Adjuntos en base64 (JSON) y asociación dentro de cada registro
     const files = await collectFilesAsJson(form);
 
-    // 5) Payload final
+    // Asociar por índice (nf[i] ↔ nf_soporte[i], etc.)
+    const nf_with_files  = attachFilesToSection(nf,  files.nf_soporte);
+    const f_with_files   = attachFilesToSection(f,   files.f_soporte);
+    const exp_with_files = attachFilesToSection(exp, files.exp_soporte);
+
+    // 5) Payload final (archivos van dentro de nf/f/exp)
     const payload = {
       submittedAt: new Date().toISOString(),
-      data: { ...data, nf, f, exp },
-      files
+      data: { ...data, nf: nf_with_files, f: f_with_files, exp: exp_with_files }
     };
 
     const response = await fetch(endpoint, {
