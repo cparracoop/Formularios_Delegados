@@ -56,6 +56,67 @@ form.addEventListener("change", (e) => {
 });
 
 
+// ============================
+// Submit UX (overlay + success)
+// ============================
+const loadingOverlay = document.getElementById("loadingOverlay");
+const successScreen = document.getElementById("successScreen");
+const formContainer = document.getElementById("formContainer");
+const newSubmissionBtn = document.getElementById("newSubmissionBtn");
+
+function setLoading(isLoading) {
+  if (loadingOverlay) {
+    loadingOverlay.classList.toggle("hidden", !isLoading);
+    loadingOverlay.setAttribute("aria-hidden", String(!isLoading));
+  }
+
+  // Bloquear botones mientras envía
+  const buttons = Array.from(document.querySelectorAll("button, input[type='button'], input[type='submit']"));
+  buttons.forEach(b => {
+    if (b && b.id === "newSubmissionBtn") return;
+    b.disabled = !!isLoading;
+  });
+}
+
+function showSuccess() {
+  if (formContainer) formContainer.classList.add("hidden");
+  if (successScreen) {
+    successScreen.classList.remove("hidden");
+    successScreen.focus();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
+
+function resetToForm() {
+  // Oculta la pantalla de éxito y muestra el form
+  if (successScreen) successScreen.classList.add("hidden");
+  if (formContainer) formContainer.classList.remove("hidden");
+
+  // ✅ Limpia el mensaje de estado viejo (el que te aparece abajo)
+  const status = document.getElementById("status"); // <-- si tu id es otro, cámbialo aquí
+  if (status) {
+    status.textContent = "";
+    status.classList.add("hidden"); // si usas .hidden
+  }
+
+  // ✅ Reinicia el formulario
+  form.reset();
+
+  // ✅ Si tu formulario es wizard, vuelve al paso 1
+  if (typeof currentStep !== "undefined") currentStep = 0;
+  if (typeof updateWizardUI === "function") updateWizardUI();
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+
+if (newSubmissionBtn) {
+  newSubmissionBtn.addEventListener("click", () => {
+    resetToForm();
+  });
+}
+
+
   if (!form) {
     console.error("No se encontró el formulario (wizardForm / coopetrolForm).");
     return;
@@ -376,6 +437,7 @@ function attachFilesToSection(sectionArr, fileArr) {
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+  setLoading(true);
 
   // Validar último step antes de enviar
   const activeStep = steps[current];
@@ -449,21 +511,25 @@ form.addEventListener("submit", async (e) => {
       form.reset();
       current = 0;
       updateWizardUI();
+      showSuccess();
+      
     } else {
-      console.error("Error HTTP:", response.status, respText);
+        console.error("Error HTTP:", response.status, respText);
       if (status) {
-        status.textContent = `Error enviando (HTTP ${response.status}). Revisa consola (F12).`;
+        status.textContent = `Error enviando (HTTP ${response.status}).`;
         status.style.color = "red";
       }
       throw new Error(respText || "Error en el envío");
     }
 
   } catch (error) {
-    console.error(error);
+      console.error(error);
     if (status) {
-      status.textContent = "Ocurrió un error al enviar el formulario. Inténtelo de nuevo. (Ver F12)";
+      status.textContent = "Ocurrió un error al enviar el formulario. Inténtelo de nuevo.";
       status.style.color = "red";
     }
+  } finally {
+    setLoading(false);
   }
 });
 
