@@ -33,6 +33,29 @@
         <span class="muted">Todos los campos marcados con * son obligatorios.</span>
       </div>
 
+
+          <!-- Overlay de cargando -->
+<div id="loadingOverlay" class="loading-overlay hidden" aria-hidden="true">
+  <div class="loading-card" role="status" aria-live="polite" aria-busy="true">
+    <div class="spinner" aria-hidden="true"></div>
+    <div class="loading-text">
+      <strong>Enviando información…</strong>
+      <div class="muted">Por favor no cierre esta ventana.</div>
+    </div>
+  </div>
+</div> <!-- ✅ ESTE TE FALTA -->
+
+    <!-- Mensaje de confirmación (se muestra al finalizar) -->
+    <section id="successScreen" class="success-screen hidden" tabindex="-1">
+      <h2>¡Registro recibido!</h2>
+      <p class="hint" style="margin-top:6px;">
+        La información quedó registrada correctamente. En los próximos minutos te llegará el formato al correo electrónico registrado como delegado.
+      </p>
+      <button type="button" class="btn btn--primary" id="newSubmissionBtn">Registrar otra postulación</button>
+    </section>
+
+  <div id="formContainer">
+
       <form id="wizardForm" novalidate>
         <!-- =======================
              STEP 1: Datos generales y personales
@@ -107,7 +130,7 @@
               <small class="error"></small>
             </div>
 
-          </div>
+          
         </section>
 
         <!-- =======================
@@ -492,6 +515,7 @@
 
         <div id="status" class="status" role="status" aria-live="polite"></div>
       </form>
+    </div>
     </section>
 
     <footer class="footer">
@@ -499,6 +523,6 @@
     </footer>
   </main>
 
-  <script src="script_ajustado.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
