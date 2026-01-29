@@ -435,11 +435,111 @@ function attachFilesToSection(sectionArr, fileArr) {
   });
 }
 
+
+// ============================
+// Helpers: leer respuesta (JSON/texto) y extraer mensaje de error
+// ============================
+function safeJsonParse(str) {
+  try { return JSON.parse(str); } catch { return null; }
+}
+
+async function readResponsePayload(response) {
+  // Intenta leer JSON (si existe) sin romper si es texto
+  try {
+    const ct = response.headers.get("content-type") || "";
+    if (ct.includes("application/json")) return await response.clone().json();
+  } catch (_) {}
+
+  try {
+    return await response.clone().text();
+  } catch (_) {}
+
+  return null;
+}
+
+function extractErrorMessage(response, payload) {
+  // payload puede ser objeto (JSON) o string (texto)
+  // Power Automate a veces responde HTTP 500 pero en el body trae { statusCode: "409", headers: { message: "..." } }
+  let msg = null;
+  let code = null;
+
+  // Tomar el código real: si el body trae statusCode (Power Automate), úsalo; si no, usa response.status
+  const effectiveStatus = (() => {
+    const fromBody =
+      payload && typeof payload === "object" && payload.statusCode != null
+        ? Number(payload.statusCode)
+        : NaN;
+    const fromHttp = Number(response?.status);
+    return Number.isFinite(fromBody) ? fromBody : fromHttp;
+  })();
+
+  // 1) Normalizar si viene string JSON
+  if (typeof payload === "string") {
+    const asJson = safeJsonParse(payload);
+    if (asJson) return extractErrorMessage(response, asJson);
+    msg = payload.trim() || null;
+  }
+
+  // 2) Si viene objeto
+  if (!msg && payload && typeof payload === "object") {
+    // Caso "Response" de Power Automate (tu captura)
+    // { statusCode: "409", headers: { ok: "False", errorCode: "...", message: "..." } }
+    const paMsg =
+      payload?.headers?.message ||
+      payload?.body?.headers?.message ||
+      payload?.body?.message ||
+      payload?.message ||
+      payload?.error?.message ||
+      payload?.error_description ||
+      null;
+
+    const paCode =
+      payload?.headers?.errorCode ||
+      payload?.body?.headers?.errorCode ||
+      payload?.errorCode ||
+      payload?.code ||
+      payload?.body?.errorCode ||
+      null;
+
+    if (paMsg) msg = paMsg;
+    if (paCode) code = paCode;
+
+    // Algunos conectores devuelven {status:400,message:"..."}
+    if (!msg && payload.status && payload.message) msg = payload.message;
+  }
+
+  // 3) Determinar "status real" (si viene embebido)
+  let status = response?.status ?? 0;
+  const embeddedStatus =
+    (payload && typeof payload === "object" && (payload.statusCode || payload?.body?.statusCode)) || null;
+
+  if (embeddedStatus) {
+    const n = Number(embeddedStatus);
+    if (!Number.isNaN(n) && n > 0) status = n;
+  }
+
+  // 4) Si aún no hay mensaje, usar fallback por status
+  if (!msg) {
+    if (status === 409) msg = "La cédula ya se encuentra registrada. Por favor verifique los datos ingresados.";
+    else if (status === 404) msg = "No se encontró el registro. Por favor valide los datos ingresados.";
+    else if (status === 400) msg = "Solicitud inválida. Revise los datos enviados.";
+    else if (status === 413) msg = "El archivo es demasiado grande para ser enviado.";
+    else if (status >= 500) msg = "Ocurrió un error en el servidor. Inténtelo de nuevo.";
+    else msg = `Error enviando (HTTP ${status || "desconocido"}).`;
+  }
+
+  // 5) Anexar código interno si existe (opcional)
+  // if (code) msg = `${msg} (${code})`;
+
+  return msg;
+}
+
+
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  setLoading(true);
 
-  // Validar último step antes de enviar
+  // Validar último step antes de enviar (no activar loading si falta algo)
   const activeStep = steps[current];
   if (!validateStep(activeStep)) return;
 
@@ -447,7 +547,10 @@ form.addEventListener("submit", async (e) => {
   if (status) {
     status.textContent = "Enviando información...";
     status.style.color = "#007d7b";
+    status.classList.remove("hidden");
   }
+
+  setLoading(true);
 
   try {
     if (!endpoint || endpoint.includes("prod-XX") || endpoint.includes(".../invoke")) {
@@ -501,32 +604,41 @@ form.addEventListener("submit", async (e) => {
       body: JSON.stringify(payload)
     });
 
-    const respText = await response.text();
+    const respPayload = await readResponsePayload(response);
 
     if (response.ok) {
       if (status) {
         status.textContent = "Formulario enviado correctamente. ¡Gracias por su participación!";
         status.style.color = "#007d7b";
+        status.classList.remove("hidden");
       }
       form.reset();
       current = 0;
       updateWizardUI();
       showSuccess();
-      
-    } else {
-        console.error("Error HTTP:", response.status, respText);
-      if (status) {
-        status.textContent = `Error enviando (HTTP ${response.status}).`;
-        status.style.color = "red";
-      }
-      throw new Error(respText || "Error en el envío");
+      return;
     }
 
-  } catch (error) {
-      console.error(error);
+    // Mostrar el mensaje del Flow (si devuelve JSON) o fallback por status
+    const errMsg = extractErrorMessage(response, respPayload);
+
+    console.error("Error HTTP:", response.status, respPayload);
+
     if (status) {
+      status.textContent = errMsg;
+      status.style.color = "red";
+      status.classList.remove("hidden");
+    }
+
+    return;
+  } catch (error) {
+    console.error(error);
+
+    // Si ya hay un mensaje específico, no lo pises
+    if (status && (!status.textContent || status.textContent.trim() === "" || status.textContent.includes("Enviando"))) {
       status.textContent = "Ocurrió un error al enviar el formulario. Inténtelo de nuevo.";
       status.style.color = "red";
+      status.classList.remove("hidden");
     }
   } finally {
     setLoading(false);
